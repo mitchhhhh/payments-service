@@ -17,12 +17,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         paymentId: randomUUID(),
         amount: createPaymentRequest.amount,
         currency: createPaymentRequest.currency
-        // We ideally need a request ID for idempotency if the IDs are server side generated.
-        // The request IDs could have a TTL of say, 24 hours, but could be less/more depending 
-        // on SLAs & requirements. Most ways of implementing this feel out of scope for this exercise,
-        // this could be done as a uniqueness constraint on the DB - but given DynamoDB doesn't 
-        // really support uniqueness constraints I've opted to not support this.
-        //requestId: createPaymentRequest.requestId
     }
     await createPayment(payment);
     return buildResponse(HttpStatusCodes.CREATED, { result: payment.paymentId });
@@ -48,4 +42,10 @@ const validateRequest = function (request: string): CreatePaymentRequest {
 type CreatePaymentRequest = {
     amount: number,
     currency: string
+    // We ideally need a request ID for idempotency if the IDs are server side generated.
+    // The request IDs could have a TTL of say, 24 hours, but could be less/more depending
+    // on SLAs & requirements. Most ways of implementing this feel out of scope for this exercise,
+    // this could be done as a uniqueness constraint on the DB - but given DynamoDB doesn't
+    // really support uniqueness constraints I've opted to not support this.
+    //requestId: createPaymentRequest.requestId
 }
